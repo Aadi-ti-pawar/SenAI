@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenAI CRM Intelligence Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Vanilla CSS Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon"></div>
+                <span class="logo-text">Sen<span>AI</span></span>
+                <span class="logo-subtext">CRM Intelligence</span>
+            </div>
+            <nav class="app-tabs">
+                <button class="nav-tab active" data-tab="inbox" id="tab-inbox">
+                    <i data-lucide="inbox"></i> Mission Control
+                </button>
+                <button class="nav-tab" data-tab="analytics" id="tab-analytics">
+                    <i data-lucide="bar-chart-2"></i> Analytics
+                </button>
+                <button class="nav-tab" data-tab="reputation" id="tab-reputation">
+                    <i data-lucide="globe"></i> Reputation
+                </button>
+            </nav>
+            <div class="connection-status">
+                <span class="status-indicator online"></span>
+                <span class="status-label">Live Connected</span>
+            </div>
+        </header>
+
+        <!-- Main Body Area -->
+        <main class="app-content">
+            <!-- View 1 & 2: Mission Control Inbox & Thread Workspace -->
+            <section class="tab-view active" id="view-inbox">
+                <div class="inbox-layout">
+                    <!-- Left Sidebar Filters -->
+                    <aside class="inbox-sidebar">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="search-input" placeholder="Search emails...">
+                        </div>
+                        <div class="filter-menu">
+                            <button class="filter-tab active" data-filter="all" id="filter-all">
+                                <i data-lucide="mail"></i> All Emails
+                                <span class="badge count-all" id="count-all">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="human" id="filter-human">
+                                <i data-lucide="user-check"></i> Needs Human
+                                <span class="badge count-human" id="count-human">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="replied" id="filter-replied">
+                                <i data-lucide="send"></i> Auto-Replied
+                                <span class="badge count-replied" id="count-replied">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="escalated" id="filter-escalated">
+                                <i data-lucide="alert-triangle"></i> Escalated
+                                <span class="badge count-escalated" id="count-escalated">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="spam" id="filter-spam">
+                                <i data-lucide="shield-alert"></i> Spam filtered
+                                <span class="badge count-spam" id="count-spam">0</span>
+                            </button>
+                        </div>
+                        <div class="bulk-actions-area">
+                            <span class="sidebar-label">Bulk Actions</span>
+                            <div class="bulk-buttons">
+                                <button class="btn btn-secondary btn-sm" id="btn-bulk-spam">
+                                    <i data-lucide="trash-2"></i> Spam
+                                </button>
+                                <button class="btn btn-secondary btn-sm" id="btn-bulk-archive">
+                                    <i data-lucide="archive"></i> Archive
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Middle Emails List -->
+                    <div class="emails-list-container">
+                        <div class="list-header">
+                            <h2 class="section-title">Inbox Feed</h2>
+                            <span class="list-subtitle" id="feed-subtitle">Showing all emails</span>
+                        </div>
+                        <div class="emails-list" id="emails-list-feed">
+                            <div class="loading-spinner">
+                                <div class="spinner"></div>
+                                <span>Loading inbox feed...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Detail Workspace -->
+                    <div class="thread-workspace" id="detail-workspace">
+                        <div class="empty-workspace-state">
+                            <i data-lucide="mail-open" class="empty-icon"></i>
+                            <h3>No Thread Selected</h3>
+                            <p>Select an email from the inbox feed to begin triaging and review agent decisions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 3: Analytics Dashboard -->
+            <section class="tab-view" id="view-analytics">
+                <div class="analytics-layout">
+                    <h2 class="section-title">Performance Analytics</h2>
+                    <!-- Quick Stats Row -->
+                    <div class="stats-cards-grid">
+                        <div class="stats-card">
+                            <div class="card-icon" style="background-color: rgba(99, 102, 241, 0.15); color: #6366f1;">
+                                <i data-lucide="mail"></i>
+                            </div>
+                            <div class="card-metrics">
+                                <span class="metric-label">Ingested Emails</span>
+                                <span class="metric-value" id="stats-total-emails">0</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="card-icon" style="background-color: rgba(239, 68, 68, 0.15); color: #ef4444;">
+                                <i data-lucide="alert-circle"></i>
+                            </div>
+                            <div class="card-metrics">
+                                <span class="metric-label">Urgent (Critical)</span>
+                                <span class="metric-value" id="stats-critical-emails">0</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="card-icon" style="background-color: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="card-metrics">
+                                <span class="metric-label">Needs Human Review</span>
+                                <span class="metric-value" id="stats-needs-review">0</span>
+                            </div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="card-icon" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981;">
+                                <i data-lucide="check-circle-2"></i>
+                            </div>
+                            <div class="card-metrics">
+                                <span class="metric-label">Processed / Replied</span>
+                                <span class="metric-value" id="stats-replied">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <div class="chart-container-card">
+                            <div class="card-header">
+                                <h3>Sentiment Over Time</h3>
+                                <span class="card-subheader">Daily trend analysis</span>
+                            </div>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="chart-sentiment-trend"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container-card">
+                            <div class="card-header">
+                                <h3>Category Distribution</h3>
+                                <span class="card-subheader">Breakdown of inquiry types</span>
+                            </div>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="chart-category-breakdown"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- At-Risk Accounts Area -->
+                    <div class="analytics-row">
+                        <div class="at-risk-card">
+                            <div class="card-header">
+                                <h3>At-Risk Customer Accounts</h3>
+                                <span class="card-subheader">Highest churn risk based on recent sentiment</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="at-risk-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Sender Email</th>
+                                            <th>Company</th>
+                                            <th>Account Value</th>
+                                            <th>Churn Risk</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="at-risk-accounts-table-body">
+                                        <!-- Table Rows added dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 4: Web Intelligence & Reputation -->
+            <section class="tab-view" id="view-reputation">
+                <div class="reputation-layout">
+                    <h2 class="section-title">Brand Reputation Index</h2>
+                    <p class="section-desc">Public sentiment monitoring scraped from trust indexes.</p>
+
+                    <div class="reputation-summary-card">
+                        <div class="reputation-logo-box">
+                            <div class="reputation-logo"></div>
+                            <div class="reputation-company-name">SenAI</div>
+                        </div>
+                        
+                        <div class="ratings-row">
+                            <!-- Trustpilot Rating Card -->
+                            <div class="rating-badge-card">
+                                <div class="rating-source">
+                                    <i data-lucide="star" style="color: #00b67a; fill: #00b67a;"></i> Trustpilot
+                                </div>
+                                <div class="rating-val" id="reputation-trustpilot-score">0.0</div>
+                                <div class="rating-label-desc" id="reputation-trustpilot-label">Excellent</div>
+                                <div class="rating-count" id="reputation-trustpilot-reviews">Based on 0 reviews</div>
+                            </div>
+
+                            <!-- G2 Rating Card -->
+                            <div class="rating-badge-card">
+                                <div class="rating-source">
+                                    <i data-lucide="award" style="color: #ff5000; fill: #ff5000;"></i> G2 Crowd
+                                </div>
+                                <div class="rating-val" id="reputation-g2-score">0.0</div>
+                                <div class="rating-label-desc" id="reputation-g2-label">Leader</div>
+                                <div class="rating-count" id="reputation-g2-reviews">Based on 0 reviews</div>
+                            </div>
+                        </div>
+
+                        <div class="reputation-meta">
+                            <div class="meta-item">
+                                <i data-lucide="clock"></i>
+                                <span>Cache Status: <strong id="reputation-status">Not Scraped</strong></span>
+                            </div>
+                            <div class="meta-item">
+                                <i data-lucide="refresh-cw"></i>
+                                <span>Last Updated: <span id="reputation-last-updated">-</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Script Application -->
+    <script src="app.js"></script>
+</body>
+</html>
