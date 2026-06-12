@@ -91,6 +91,30 @@ class Email(Base):
 
     thread: Mapped[Thread] = relationship(back_populates="emails")
     jobs: Mapped[list["ProcessingJob"]] = relationship(back_populates="email")
+    actions: Mapped[list["Action"]] = relationship(back_populates="email")
+
+
+class Action(Base):
+    __tablename__ = "actions"
+
+    id = uuid_pk()
+    email_id: Mapped[UUID] = mapped_column(ForeignKey("emails.id"), nullable=False, index=True)
+    thread_id: Mapped[UUID] = mapped_column(ForeignKey("threads.id"), nullable=False, index=True)
+    agent_reasoning_log: Mapped[dict | list] = mapped_column(JSONB, default=dict)
+    agent_model: Mapped[str | None] = mapped_column(String(50))
+    reasoning_trace: Mapped[str | None] = mapped_column(Text)
+    action_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    proposed_content: Mapped[str | None] = mapped_column(Text)
+    is_approved: Mapped[bool] = mapped_column(Boolean, default=False)
+    approved_by: Mapped[str | None] = mapped_column(String(255))
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime)
+    executed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    execution_status: Mapped[str | None] = mapped_column(String(50), default="Pending", index=True)
+    rag_citations: Mapped[list] = mapped_column(JSONB, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    email: Mapped[Email] = relationship(back_populates="actions")
 
 
 class ProcessingJob(Base):
